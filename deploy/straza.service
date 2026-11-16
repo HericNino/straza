@@ -1,0 +1,22 @@
+# systemd unit: copy to /etc/systemd/system/straza.service, then
+#   sudo systemctl daemon-reload && sudo systemctl enable --now straza
+#   journalctl -u straza -f        # follow its log
+[Unit]
+Description=straza uptime monitor
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=straza
+WorkingDirectory=/var/lib/straza
+ExecStart=/usr/local/bin/straza run -c /etc/straza/straza.json
+Restart=on-failure
+RestartSec=5
+# hardening: the monitor only needs the network and its own data directory
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/straza
+
+[Install]
+WantedBy=multi-user.target

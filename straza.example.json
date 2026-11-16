@@ -1,0 +1,73 @@
+{
+  "database": "straza.db",
+  "retention_days": 90,
+  "web": {
+    "host": "127.0.0.1",
+    "port": 8080,
+    "title": "Service status",
+    "allow_ack": false
+  },
+  "defaults": {
+    "interval": 30,
+    "timeout": 5,
+    "failures_to_open": 3,
+    "successes_to_resolve": 2
+  },
+  "checks": [
+    {
+      "name": "website",
+      "type": "http",
+      "url": "https://example.com/",
+      "expect_status": [
+        200
+      ],
+      "max_latency_ms": 1500,
+      "severity": "sev1"
+    },
+    {
+      "name": "website-cert",
+      "type": "tls",
+      "host": "example.com",
+      "warn_days": 21,
+      "interval": 3600,
+      "severity": "sev2"
+    },
+    {
+      "name": "dns",
+      "type": "dns",
+      "host": "example.com",
+      "severity": "sev2"
+    },
+    {
+      "name": "database-port",
+      "type": "tcp",
+      "host": "127.0.0.1",
+      "port": 5432,
+      "severity": "sev1"
+    }
+  ],
+  "notifiers": {
+    "console": {
+      "type": "console"
+    },
+    "alert-log": {
+      "type": "file",
+      "path": "alerts.jsonl"
+    }
+  },
+  "escalation": [
+    {
+      "after_minutes": 0,
+      "notify": [
+        "console",
+        "alert-log"
+      ]
+    },
+    {
+      "after_minutes": 15,
+      "notify": [
+        "console"
+      ]
+    }
+  ]
+}
